@@ -1,0 +1,181 @@
+package sumitra_lab1;
+
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class ConvertToGray {
+
+	//private static Object BufferedImage;
+
+	public static void main(String[] args) 
+	{
+	
+		BufferedImage image;
+		try
+		{
+			image=ImageIO.read(new File("C:\\Users\\user\\eclipse-workspace\\sumitra_lab1\\img1.jpg"));
+			System.out.println("reading completed");
+		}
+		catch(IOException e)
+		{
+			System.out.println("Error:"+e);
+			return;
+		}
+		 int[][] imgmed=getpixel(image);		
+	   //sorting ....
+		 int[] arr = new int[imgmed.length*imgmed[0].length];
+		 int count = 0;
+		 for(int i1 = 0 ; i1 < imgmed.length; i1++) 
+		 {
+		        for(int j = 0; j <imgmed[0].length; j++)
+		        {
+		            arr[count++] =imgmed[i1][j];
+		 
+		        }
+		 }
+		 Arrays.sort(arr);
+		 //image display.....
+		     int[][] g=getpixel(image);		
+		    BufferedImage i =getBIfromarray(g);
+	        displayimage1(i);
+	        
+		    int md =median(arr);
+	        int mn=meanfun(g);
+	        int[][] h=new int[image.getWidth()][image.getHeight()];
+	        h= threshold(g,mn);
+	        BufferedImage image3;
+	        image3=getBIfromarray(h);
+	       displayimage1(image3);
+	    
+	     //finding total no of pixel.....
+	      /*  int total=arrimgobj.length*arrimgobj[0].length;
+	     System.out.println(total);
+	     System.out.println(median(list));
+		  System.out.println(meanfun(arrimgobj));*/
+	    
+	    
+	   try
+		{
+			ImageIO.write(image3, "jpg",new File("C:\\Users\\user\\eclipse-workspace\\sumitra_lab1\\grayed.jpg"));
+			System.out.println("Writing complete. ");
+		}
+		catch(IOException e)
+		{
+			System.out.println("Error: "+e);
+			return;
+		}
+		}  
+         static int[][] getpixel(BufferedImage image)
+		  {
+			    int[][] f= new int[image.getWidth()][image.getHeight()];
+			     for(int y=0;y<image.getHeight();y++)
+			     {
+				    for(int x=0;x<image.getWidth();x++)
+				     {
+					    Color c =new Color(image.getRGB(x, y));
+					    int red=(c.getRed());
+					    int blue=(c.getBlue());
+					    int green=(c.getGreen());
+					
+					    f[x][y]=(red+blue+green)/3;
+				
+				}
+			}
+			return f;
+		}
+		static BufferedImage getBIfromarray(int[][] f)
+		{
+			BufferedImage image =new BufferedImage(f.length,f[0].length,BufferedImage.TYPE_BYTE_GRAY);
+			
+			for(int x=0;x<f.length;x++)
+			{
+				for(int y=0;y<f[0].length;y++)
+				{
+					Color newCol =new Color(f[x][y],f[x][y],f[x][y]);
+					image.setRGB(x,y,newCol.getRGB());
+					
+				}
+			}
+			return image;
+				
+		}
+		
+		
+		static void displayimage1(BufferedImage bi)
+		{
+			ImageIcon icon =new ImageIcon(bi);
+			JFrame frame =new JFrame();
+			frame.setLayout(new FlowLayout());
+			frame.setSize(300,250);
+			JLabel lbl =new JLabel();
+			lbl.setIcon(icon);
+			frame.add(lbl);
+			frame.setVisible(true);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			}
+		
+		
+     
+		
+	static  int[][]threshold(int[][] f,int value)
+			{
+			
+	         for(int x=0;x<f.length;x++) 
+			
+				for(int y=0;y<f[0].length;y++)
+				{
+					if(f[x][y]>value)
+					{
+						f[x][y]=value;
+				}
+					else
+					{
+						f[x][y]=0;
+					}
+			}
+				return f;	
+}
+	
+	static int meanfun(int[][]f)
+	{
+		int count=0,sum=0,mean=0;
+		
+		for(int x=0;x<f.length;x++) {
+			
+			for(int y=0;y<f[0].length;y++)
+			{
+				count++;
+				sum=sum+f[x][y];
+				
+			}
+		}
+	        mean=sum/count;
+	        return mean;
+	}
+	
+	public static int median(int[] m)
+	{
+	    int middle = m.length/2;
+	    if (m.length%2 == 1) {
+	        return m[middle];
+	    }
+	    else {
+	        return (m[middle-1] + m[middle]) / 2;
+	    }
+	   
+	    
+	    
+	}
+	
+	
+	
+	}
